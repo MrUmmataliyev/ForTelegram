@@ -1,6 +1,8 @@
 using Telegram.Bot.Polling;
 using Telegram.Bot;
 using ForTelegram.Services;
+using ForTelegram.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +15,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHostedService<BS>();
 builder.Services.AddSingleton<IUpdateHandler, BotUpdateHand>();
 builder.Services.AddSingleton(new TelegramBotClient("7152494048:AAE-0j1ChDWE_92vHfvfAVViLoEybh2jSSE"));
+builder.Services.AddDbContext<AppDbContext>(option =>
+option.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
+
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
