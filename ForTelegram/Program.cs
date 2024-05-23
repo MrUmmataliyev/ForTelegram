@@ -3,6 +3,7 @@ using Telegram.Bot;
 using ForTelegram.Services;
 using ForTelegram.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using ForTelegram.Services.UserRepo;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHostedService<BS>();
 builder.Services.AddSingleton<IUpdateHandler, BotUpdateHand>();
+builder.Services.AddScoped<IUserRepos, UserRepos>();
 builder.Services.AddSingleton(new TelegramBotClient("7152494048:AAE-0j1ChDWE_92vHfvfAVViLoEybh2jSSE"));
 builder.Services.AddDbContext<AppDbContext>(option =>
 option.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))

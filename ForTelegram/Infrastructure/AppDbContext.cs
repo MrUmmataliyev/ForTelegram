@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ForTelegram.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ForTelegram.Infrastructure
 {
@@ -6,7 +7,8 @@ namespace ForTelegram.Infrastructure
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) 
         {
-            
+            Database.Migrate(); 
         }
+        public DbSet<TeleUser> Users { get; set; }
     }
 }

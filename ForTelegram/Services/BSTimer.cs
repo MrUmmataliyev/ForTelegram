@@ -1,5 +1,6 @@
 ﻿
 using ForTelegram.Infrastructure;
+using ForTelegram.Services.UserRepo;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
@@ -18,13 +19,20 @@ namespace ForTelegram.Services
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             var scope = _scopeFactory.CreateScope();
-            var dbContext = scope.ServiceProvider.GetService<AppDbContext>();
-
+            var repo = scope.ServiceProvider.GetService<IUserRepos>();
+            var users = await repo.GetAllUsers();
             while(!stoppingToken.IsCancellationRequested)
             {
-                await _botClient.SendTextMessageAsync(
-                    chatId: 
-                    );
+                foreach(var user in users)
+                {
+                    await _botClient.SendTextMessageAsync(
+                    chatId: user.Id,
+                    text: "Qales",
+                    cancellationToken: stoppingToken
+                    
+                    ); 
+                }
+                await Task.Delay(TimeSpan.FromSeconds(12), stoppingToken);
             }
         }
     }
