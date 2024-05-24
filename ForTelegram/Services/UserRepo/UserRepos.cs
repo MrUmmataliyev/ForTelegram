@@ -17,7 +17,7 @@ namespace ForTelegram.Services.UserRepo
         {
             var isExists= await _context.Users.FirstOrDefaultAsync(x=> x.Id==user.Id);
             
-            if (isExists == null)
+            if (isExists != null)
             {
                 return;
             }

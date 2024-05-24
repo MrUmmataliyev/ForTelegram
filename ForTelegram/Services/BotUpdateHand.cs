@@ -4,50 +4,70 @@ using Telegram.Bot;
 using ForTelegram.Infrastructure;
 using ForTelegram.Services.UserRepo;
 using ForTelegram.Models;
+using Telegram.Bot.Types.Enums;
 
 namespace ForTelegram.Services
 {
-    public class BotUpdateHand : IUpdateHandler
+    public class BotUpdateHand
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
-        public BotUpdateHand(IServiceScopeFactory serviceScopeFactory)
+        private readonly TelegramBotClient _botClient;
+        public BotUpdateHand(IServiceScopeFactory serviceScopeFactory, TelegramBotClient botClient)
         {
-           _serviceScopeFactory = serviceScopeFactory;
+            _serviceScopeFactory = serviceScopeFactory;
+            _botClient = botClient;
         }
         public Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
-        public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
+        public async Task HandleUpdateAsync(Update update, CancellationToken cancellationToken)
         {
-            var scope = _serviceScopeFactory.CreateScope();
-            var repo = scope.ServiceProvider.GetRequiredService<IUserRepos>();
-            // Only process Message updates: https://core.telegram.org/bots/api#message
-            if (update.Message is not { } message)
-                return;
-            // Only process text messages
-            if (message.Text is not { } messageText)
-                return;
-
-            var chatId = message.Chat.Id;
-
-
-            var user = new TeleUser
+            var message = update.Type switch
             {
-                Id = chatId,
-                UserName = message.Chat.Username,
-
+                UpdateType.Message => HandleMessageAsync(update.Message, cancellationToken),
+                _ => HandleMessageAsync(update.Message, cancellationToken),
             };
-            await repo.AddUser(user);
 
-            Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
+            try
+            {
+                await message;
+            }
+            catch
+            {
+                await message;
+            }
 
-            // Echo received message text
-            Message sentMessage = await botClient.SendTextMessageAsync(
-                chatId: chatId,
-                text: "You said:\n" + messageText,
-                cancellationToken: cancellationToken);
+
+        }
+        private async Task HandleMessageAsync(Message message, CancellationToken cancellationToken)
+        {
+            try
+            {
+                using (var scope = _serviceScopeFactory.CreateScope())
+                {
+                    var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepos>();
+
+                    var user = new TeleUser()
+                    {
+                        Id = message.Chat.Id,
+                        UserName = message.From.Username
+                    };
+
+                    await userRepository.AddUser(user);
+
+                    await _botClient.SendTextMessageAsync(
+                        chatId: message.Chat.Id,
+                        text: $"You said:\n<i>{message.Text}</i>",
+                        parseMode: ParseMode.Html,
+                        cancellationToken: cancellationToken);
+                }
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.Message);
+            }
         }
     }
 }
