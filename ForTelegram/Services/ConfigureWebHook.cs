@@ -6,9 +6,9 @@ using Telegram.Bot.Types.Enums;
 
 namespace ForTelegram.Services
 {
-    public class ConfigureWebHook(IConfiguration configuration, TelegramBotClient botClient) : BackgroundService
+    public class ConfigureWebHook(IConfiguration configuration, ITelegramBotClient botClient) : BackgroundService
     {
-        private readonly TelegramBotClient _botClient = botClient;
+        private readonly ITelegramBotClient _botClient = botClient;
         private readonly BotConfig _botConfig = configuration.GetSection("BotConfiguration").Get<BotConfig>()!;
         
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)

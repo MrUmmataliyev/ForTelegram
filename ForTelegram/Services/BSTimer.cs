@@ -8,9 +8,9 @@ namespace ForTelegram.Services
 {
     public class BSTimer : BackgroundService
     {
-        private readonly TelegramBotClient _botClient;
+        private readonly ITelegramBotClient _botClient;
         private readonly IServiceScopeFactory _scopeFactory;
-        public BSTimer(TelegramBotClient botClient, IServiceScopeFactory scopeFactory)
+        public BSTimer(ITelegramBotClient botClient, IServiceScopeFactory scopeFactory)
         {
             _botClient = botClient;
             _scopeFactory = scopeFactory;

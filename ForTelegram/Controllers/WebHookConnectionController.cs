@@ -6,8 +6,6 @@ using Telegram.Bot.Types;
 
 namespace ForTelegram.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
     public class WebHookConnectionController : ControllerBase
     {
         private readonly BotUpdateHand _handler;

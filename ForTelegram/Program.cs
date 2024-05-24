@@ -5,18 +5,23 @@ using ForTelegram.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using ForTelegram.Services.UserRepo;
 using ForTelegram.Models;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHostedService<BS>();
-builder.Services.AddScoped<IUpdateHandler, BotUpdateHand>();
+builder.Services.AddScoped<BotUpdateHand>();
 builder.Services.AddScoped<IUserRepos, UserRepos>();
+builder.Services.Configure<HostOptions>(options =>
+{
+    options.BackgroundServiceExceptionBehavior = BackgroundServiceExceptionBehavior.Ignore;
+});
 builder.Services.AddDbContext<AppDbContext>(option =>
 option.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );

@@ -11,8 +11,8 @@ namespace ForTelegram.Services
     public class BotUpdateHand
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
-        private readonly TelegramBotClient _botClient;
-        public BotUpdateHand(IServiceScopeFactory serviceScopeFactory, TelegramBotClient botClient)
+        private readonly ITelegramBotClient _botClient;
+        public BotUpdateHand(IServiceScopeFactory serviceScopeFactory, ITelegramBotClient botClient)
         {
             _serviceScopeFactory = serviceScopeFactory;
             _botClient = botClient;

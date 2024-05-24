@@ -5,19 +5,19 @@ namespace ForTelegram.Services
 {
     public class BS : BackgroundService
     {
-        private readonly TelegramBotClient _botClient;
-        private readonly IUpdateHandler _updateHandler;
+        private readonly ITelegramBotClient _botClient;
+       // private readonly IUpdateHandler _updateHandler;
 
-        public BS(TelegramBotClient telegramBotClient, IUpdateHandler updateHandler)
+        public BS(ITelegramBotClient telegramBotClient)
         {
             _botClient = telegramBotClient;
-            _updateHandler = updateHandler;
+            //_updateHandler = updateHandler;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
 
-            _botClient.StartReceiving(
+           /* _botClient.StartReceiving(
                 updateHandler: _updateHandler.HandleUpdateAsync,
                 pollingErrorHandler: _updateHandler.HandlePollingErrorAsync,
                 receiverOptions: new Telegram.Bot.Polling.ReceiverOptions()
@@ -26,7 +26,7 @@ namespace ForTelegram.Services
                     ThrowPendingUpdates = true
                 },
                 cancellationToken: stoppingToken
-                );
+                );*/
         }
     }
 }
